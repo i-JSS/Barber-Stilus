@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Barber Stilus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap">
+  <style>
+    /* Layout: vitrine de bairro. Fundo preto, uma faixa dourada com a tabela de preços (a placa da fachada) como único momento forte. */
+    :root {
+      --ink: #0e0d0b;
+      --coal: #171512;
+      --smoke: #2b2721;
+      --bone: #f3ecdc;
+      --mute: #a59d8b;
+      --gold: #e6b422;
+      --gold-hi: #f3c73f;
+      --ok: #62d08c;
+      --off: #d9674f;
+      --f-display: "Big Shoulders Display", "Oswald", "Arial Narrow", Impact, sans-serif;
+      --f-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+      --f-label: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ink);
+      color: var(--bone);
+      font: 400 1.0625rem/1.6 var(--f-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    @media (max-width: 720px) {
+      body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 3px; }
+
+    .wrap {
+      width: 100%;
+      max-width: 1120px;
+      margin-inline: auto;
+      padding-left: max(16px, env(safe-area-inset-left, 0px));
+      padding-right: max(16px, env(safe-area-inset-right, 0px));
+    }
+
+    /* ---------- logo (arquivo SVG publicado junto com a pagina) ---------- */
+    .logo {
+      display: block;
+      aspect-ratio: 1;
+      height: auto;
+    }
+
+    /* ---------- botões ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .6em;
+      min-height: 52px;
+      padding: .75em 1.5em;
+      background: var(--gold);
+      color: var(--ink);
+      font: 700 1.125rem/1 var(--f-label);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color .15s ease, transform .15s ease;
+    }
+    .btn:hover { background: var(--gold-hi); }
+    .btn:active { transform: translateY(1px); }
+    .btn svg { flex: none; }
+    .btn--line { background: transparent; color: var(--bone); box-shadow: inset 0 0 0 2px var(--smoke); }
+    .btn--line:hover { background: var(--coal); box-shadow: inset 0 0 0 2px var(--gold); }
+    .btn--ink { background: var(--ink); color: var(--gold); }
+    .btn--ink:hover { background: #1c1a16; }
+
+    /* ---------- topo ---------- */
+    html { scroll-padding-top: 84px; }
+    /* faixa que cobre a area do sistema acima do cabecalho fixo (celulares com notch) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0 0 auto;
+      height: env(safe-area-inset-top, 0px);
+      background: var(--ink);
+      z-index: 40;
+    }
+    .bar {
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 30;
+      background: rgba(14, 13, 11, .94);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--smoke);
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-block: 10px;
+    }
+    .top-right { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .brand .logo { width: 48px; flex: none; }
+    .brand b {
+      font: 800 1.5rem/1 var(--f-display);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .top .btn { min-height: 44px; padding: .55em 1.1em; font-size: 1rem; flex: none; }
+    @media (max-width: 720px) {
+      .top { gap: 12px; }
+      .top .btn { display: none; } /* no celular o botao fixo do rodape faz esse papel */
+      .brand b { display: none; }
+      .top-right { flex: 1; justify-content: flex-end; }
+    }
+
+    /* ---------- hero ---------- */
+    .hero { padding-block: clamp(24px, 5vw, 64px) clamp(40px, 7vw, 88px); }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: clamp(28px, 5vw, 72px);
+      align-items: center;
+    }
+    .hero-grid > * { min-width: 0; }
+    @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font: 600 1rem/1.2 var(--f-label);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    h1 {
+      margin: 0;
+      font: 900 clamp(3.4rem, 11.5vw, 7.4rem)/.9 var(--f-display);
+      text-transform: uppercase;
+      letter-spacing: -.005em;
+      text-wrap: balance;
+    }
+    h1 em { font-style: normal; color: var(--gold); }
+    .lead {
+      margin: 22px 0 0;
+      max-width: 34rem;
+      font-size: 1.1875rem;
+      color: var(--bone);
+    }
+    .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin-top: 30px; }
+    .tel {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font: 600 1.375rem/1 var(--f-label);
+      letter-spacing: .04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .copy {
+      font: 600 .8125rem/1 var(--f-label);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--mute);
+      background: transparent;
+      border: 1px solid var(--smoke);
+      border-radius: 4px;
+      padding: 6px 9px;
+      cursor: pointer;
+    }
+    .copy:hover { color: var(--bone); border-color: var(--mute); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 14px 7px 12px;
+      border-radius: 999px;
+      background: var(--coal);
+      box-shadow: inset 0 0 0 1px var(--smoke);
+      font: 600 .9375rem/1.2 var(--f-label);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    @media (max-width: 720px) {
+      .pill { font-size: .8125rem; line-height: 1.15; padding: 6px 12px 6px 10px; letter-spacing: .06em; min-width: 0; }
+    }
+    .pill i { width: 10px; height: 10px; border-radius: 50%; background: var(--mute); flex: none; }
+    .pill.is-open i { background: var(--ok); box-shadow: 0 0 0 4px rgba(98, 208, 140, .18); }
+    .pill.is-closed i { background: var(--off); }
+
+    .hero-logo { width: 100%; max-width: 460px; justify-self: center; }
+    @media (max-width: 860px) { .hero-logo { max-width: 320px; } }
+
+    /* ---------- barber pole ---------- */
+    .pole {
+      height: 12px;
+      background: repeating-linear-gradient(-45deg, var(--gold) 0 12px, var(--ink) 12px 24px, var(--bone) 24px 36px, var(--ink) 36px 48px);
+    }
+
+    /* ---------- tabela de preços ---------- */
+    .board { background: var(--gold); color: var(--ink); }
+    .board .wrap { padding-block: clamp(40px, 7vw, 84px); }
+    .plate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 2vw, 20px);
+      margin-bottom: clamp(28px, 5vw, 52px);
+    }
+    .roundel {
+      width: clamp(46px, 9vw, 84px);
+      aspect-ratio: 1;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--bone);
+      border: 4px solid var(--ink);
+      color: var(--ink);
+    }
+    .roundel svg { width: 58%; height: 58%; }
+    .oval {
+      margin: 0;
+      padding: .42em 1.3em .5em;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--gold);
+      box-shadow: 0 0 0 4px var(--gold), 0 0 0 7px var(--ink);
+      font: 900 clamp(1.3rem, 4.6vw, 3.1rem)/1 var(--f-display);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .prices {
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(28px, 6vw, 80px);
+    }
+    @media (max-width: 720px) { .prices { grid-template-columns: 1fr; } }
+    .prices li { padding-block: 14px; }
+    .row { display: flex; align-items: baseline; gap: 12px; }
+    .row .n {
+      font: 800 clamp(1.45rem, 3.6vw, 2.1rem)/1.1 var(--f-display);
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+    .row .dots { flex: 1; min-width: 14px; border-bottom: 3px dotted rgba(14, 13, 11, .5); transform: translateY(-5px); }
+    .row .p {
+      font: 900 clamp(1.6rem, 4vw, 2.5rem)/1 var(--f-display);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .row .p small { font-size: .55em; margin-right: .15em; letter-spacing: .04em; }
+    .prices .d { margin: 4px 0 0; font-size: .9375rem; line-height: 1.35; color: rgba(14, 13, 11, .78); }
+    .board-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 24px;
+      max-width: 980px;
+      margin: clamp(24px, 4vw, 44px) auto 0;
+      padding-top: 24px;
+      border-top: 3px solid var(--ink);
+    }
+    .board-foot p { margin: 0; font: 600 1rem/1.4 var(--f-label); letter-spacing: .06em; text-transform: uppercase; }
+
+    /* ---------- como marcar ---------- */
+    section.block { padding-block: clamp(48px, 8vw, 104px); }
+    h2 {
+      margin: 0 0 clamp(24px, 4vw, 44px);
+      font: 900 clamp(2.4rem, 6.5vw, 4.4rem)/.95 var(--f-display);
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+    .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 48px); }
+    @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 28px; } }
+    .steps li { min-width: 0; display: grid; grid-template-columns: auto 1fr; column-gap: 18px; align-items: start; }
+    .steps .num { font: 900 4.25rem/.8 var(--f-display); color: var(--gold); }
+    .steps h3 { margin: 0 0 6px; font: 800 1.6rem/1.05 var(--f-display); text-transform: uppercase; letter-spacing: .02em; }
+    .steps p { margin: 0; color: var(--mute); }
+
+    /* ---------- onde fica ---------- */
+    .where { border-top: 1px solid var(--smoke); }
+    .where-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 6vw, 80px); align-items: start; }
+    .where-grid > * { min-width: 0; }
+    @media (max-width: 820px) { .where-grid { grid-template-columns: 1fr; } }
+    address { font-style: normal; font-size: 1.25rem; line-height: 1.5; }
+    address strong { display: block; font: 800 1.9rem/1.1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 8px; color: var(--gold); }
+    .where .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .textlink { display: inline-block; margin-top: 20px; color: var(--mute); text-underline-offset: 4px; }
+    .textlink:hover { color: var(--bone); }
+
+    .hours { background: var(--coal); border: 1px solid var(--smoke); border-radius: 10px; padding: clamp(18px, 3vw, 28px); }
+    .hours h3 { margin: 0 0 12px; font: 600 1rem/1.2 var(--f-label); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+    .hours table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .hours th, .hours td { padding: 11px 0; text-align: left; border-top: 1px solid var(--smoke); font-weight: 500; }
+    .hours tr:first-child th, .hours tr:first-child td { border-top: 0; }
+    .hours td { text-align: right; }
+    .hours tr.is-today th, .hours tr.is-today td { color: var(--gold); font-weight: 600; }
+    .hours tr.is-today th::after { content: "hoje"; margin-left: 10px; padding: 2px 7px; border-radius: 3px; background: var(--gold); color: var(--ink); font: 700 .75rem/1 var(--f-label); letter-spacing: .1em; text-transform: uppercase; vertical-align: 2px; }
+    .hours .off { color: var(--mute); }
+
+    /* ---------- rodapé ---------- */
+    footer { border-top: 1px solid var(--smoke); padding-block: 32px 40px; color: var(--mute); font-size: .9375rem; }
+    footer .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; }
+    footer .logo { width: 64px; flex: none; }
+    footer p { margin: 0; min-width: 0; flex: 1 1 260px; }
+
+    /* ---------- botão fixo no celular ---------- */
+    .dock {
+      display: none;
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 20;
+      padding-top: 18px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      padding-left: max(16px, env(safe-area-inset-left, 0px));
+      padding-right: max(16px, env(safe-area-inset-right, 0px));
+      background: linear-gradient(to top, var(--ink) 62%, rgba(14, 13, 11, 0));
+    }
+    .dock .btn { width: 100%; min-height: 56px; box-shadow: 0 6px 24px rgba(0, 0, 0, .5); }
+    @media (max-width: 720px) { .dock { display: block; } }
+  </style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-chat" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.5.7.7-2.4-.2-.3A8 8 0 1 1 12 20Zm4.4-5.6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1-1.4-.7-2.4-1.3-3.3-2.9-.2-.3.2-.3.7-1.1.1-.2 0-.3 0-.5l-.7-1.7c-.2-.4-.3-.4-.5-.4h-.4c-.2 0-.5.1-.7.3-.8.8-1 1.7-.6 2.8.6 1.6 2.5 3.8 5 4.7 1.8.6 2.5.5 3.2.4.6-.1 1.6-.7 1.8-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 64 64"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="50" r="8"/><circle cx="47" cy="50" r="8"/><path d="M23 43 46 7M41 43 18 7"/></g></symbol>
+  <symbol id="i-razor" viewBox="0 0 64 64"><g fill="currentColor" transform="rotate(-28 32 32)"><rect x="4" y="21" width="38" height="11" rx="3.5"/><rect x="40" y="24.5" width="22" height="7" rx="3.5"/><rect x="4" y="21" width="38" height="3" rx="1.5" opacity=".35"/></g></symbol>
+</svg>
+
+<header class="bar">
+  <div class="wrap top">
+    <a class="brand" href="#topo" aria-label="Barber Stilus, início">
+      <img class="logo" src="logo-barber-stilus-fundo-escuro.svg" width="48" height="48" alt="Logo Barber Stilus">
+      <b>Barber Stilus</b>
+    </a>
+    <div class="top-right">
+      <div class="pill" id="status" role="status"><i></i><span>Confira o horário abaixo</span></div>
+      <a class="btn" href="https://wa.me/5561999259104?text=Ol%C3%A1%21%20Quero%20marcar%20um%20hor%C3%A1rio%20na%20Barber%20Stilus." target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-chat"/></svg><span>Agendar</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="topo">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Barbearia · Vicente Pires, Brasília-DF</p>
+        <h1>Corte e barba em <em>Vicente Pires</em></h1>
+        <p class="lead">Corte, degradê e barba feitos com capricho, perto de você. Chame no WhatsApp, combine o horário e venha.</p>
+        <div class="cta">
+          <a class="btn" href="https://wa.me/5561999259104?text=Ol%C3%A1%21%20Quero%20marcar%20um%20hor%C3%A1rio%20na%20Barber%20Stilus." target="_blank" rel="noopener"><svg width="22" height="22" aria-hidden="true"><use href="#i-chat"/></svg>Agendar no WhatsApp</a>
+          <span class="tel"><span id="tel">(61) 99925-9104</span><button class="copy" id="copy" type="button">Copiar</button></span>
+        </div>
+      </div>
+      <img class="logo hero-logo" src="logo-barber-stilus-fundo-escuro.svg" width="460" height="460" alt="Logo Barber Stilus, tesoura e navalha cruzadas entre dois ramos de louro">
+    </div>
+  </section>
+
+  <div class="pole" aria-hidden="true"></div>
+
+  <section class="board" id="precos" aria-labelledby="t-precos">
+    <div class="wrap">
+      <div class="plate">
+        <span class="roundel" aria-hidden="true"><svg><use href="#i-scissors"/></svg></span>
+        <h2 class="oval" id="t-precos" style="margin:0">Tabela de preços</h2>
+        <span class="roundel" aria-hidden="true"><svg><use href="#i-razor"/></svg></span>
+      </div>
+      <ul class="prices">
+        <li><div class="row"><span class="n">Corte</span><span class="dots"></span><span class="p"><small>R$</small>35</span></div><p class="d">Tesoura ou máquina, do jeito que você pedir.</p></li>
+        <li><div class="row"><span class="n">Degradê</span><span class="dots"></span><span class="p"><small>R$</small>40</span></div><p class="d">Transição na máquina com acabamento.</p></li>
+        <li><div class="row"><span class="n">Barba</span><span class="dots"></span><span class="p"><small>R$</small>30</span></div><p class="d">Contorno e alinhamento na navalha.</p></li>
+        <li><div class="row"><span class="n">Corte + barba</span><span class="dots"></span><span class="p"><small>R$</small>60</span></div><p class="d">O combo completo, numa cadeira só.</p></li>
+        <li><div class="row"><span class="n">Sobrancelha</span><span class="dots"></span><span class="p"><small>R$</small>15</span></div><p class="d">Alinhada na navalha.</p></li>
+        <li><div class="row"><span class="n">Pezinho</span><span class="dots"></span><span class="p"><small>R$</small>15</span></div><p class="d">Acabamento de nuca e contorno.</p></li>
+      </ul>
+      <div class="board-foot">
+        <p>Confirme valores e disponibilidade no WhatsApp.</p>
+        <a class="btn btn--ink" href="https://wa.me/5561999259104?text=Ol%C3%A1%21%20Quero%20marcar%20um%20hor%C3%A1rio%20na%20Barber%20Stilus." target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-chat"/></svg>Marcar meu horário</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="pole" aria-hidden="true"></div>
+
+<!--  <section class="block" aria-labelledby="t-marcar">-->
+<!--    <div class="wrap">-->
+<!--      <h2 id="t-marcar">Marcar é rápido</h2>-->
+<!--      <ol class="steps">-->
+<!--        <li><span class="num">1</span><div><h3>Chame no WhatsApp</h3><p>Mande mensagem para (61) 99925-9104 dizendo o que você quer fazer.</p></div></li>-->
+<!--        <li><span class="num">2</span><div><h3>Combine o horário</h3><p>Confirmamos o dia e a hora que couberem na sua agenda.</p></div></li>-->
+<!--        <li><span class="num">3</span><div><h3>Chegue e corte</h3><p>Venha no horário combinado. O endereço está logo abaixo.</p></div></li>-->
+<!--      </ol>-->
+<!--    </div>-->
+<!--  </section>-->
+
+  <section class="block where" aria-labelledby="t-onde">
+    <div class="wrap where-grid">
+      <div>
+        <h2 id="t-onde">Onde a gente fica</h2>
+        <address>
+          <strong>Barber Stilus</strong>
+          SHVP, Rua 4B, Chácara 283<br>
+          Lote 01, Loja 04<br>
+          Vicente Pires, Brasília-DF
+        </address>
+        <div class="acts">
+          <a class="btn" href="https://www.google.com/maps/search/?api=1&query=Barber%20Stilus%20SHVP%20Rua%204B%20Ch%C3%A1cara%20283%20Bras%C3%ADlia%20DF" target="_blank" rel="noopener">Como chegar</a>
+          <a class="btn btn--line" href="https://wa.me/5561999259104?text=Ol%C3%A1%21%20Quero%20marcar%20um%20hor%C3%A1rio%20na%20Barber%20Stilus." target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-chat"/></svg>Chamar</a>
+        </div>
+        <a class="textlink" href="https://www.google.com/maps/search/?api=1&query=Barber%20Stilus%20SHVP%20Rua%204B%20Ch%C3%A1cara%20283%20Bras%C3%ADlia%20DF" target="_blank" rel="noopener">Ver avaliações no Google</a>
+      </div>
+      <div class="hours">
+        <h3>Horário de funcionamento</h3>
+        <table>
+          <tbody id="horas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img class="logo" src="logo-barber-stilus-fundo-escuro.svg" width="64" height="64" alt="Logo Barber Stilus">
+    <p>Barber Stilus · SHVP, Rua 4B, Chácara 283, Lote 01, Loja 04, Vicente Pires, Brasília-DF · (61) 99925-9104</p>
+  </div>
+</footer>
+
+<div class="dock"><a class="btn" href="https://wa.me/5561999259104?text=Ol%C3%A1%21%20Quero%20marcar%20um%20hor%C3%A1rio%20na%20Barber%20Stilus." target="_blank" rel="noopener"><svg width="22" height="22" aria-hidden="true"><use href="#i-chat"/></svg>Agendar no WhatsApp</a></div>
+
+<!--
+  HORARIOS DE FUNCIONAMENTO (edite so aqui)
+  Cada dia tem "entrada" e "saida" no formato "HH:MM".
+  Para um dia sem expediente, use {"nao_trabalha": true}.
+  Chaves dos dias: seg, ter, qua, qui, sex, sab, dom.
+-->
+<script type="application/json" id="horarios">
+  {
+    "seg": { "nao_trabalha": true },
+    "ter": { "entrada": "09:00", "saida": "20:00" },
+    "qua": { "entrada": "09:00", "saida": "20:00" },
+    "qui": { "entrada": "09:00", "saida": "20:00" },
+    "sex": { "entrada": "09:00", "saida": "20:00" },
+    "sab": { "entrada": "08:00", "saida": "18:00" },
+    "dom": { "entrada": "08:00", "saida": "12:00" }
+  }
+</script>
+
+<script>
+  (function () {
+    var cfg = {};
+    try { cfg = JSON.parse(document.getElementById('horarios').textContent) || {}; } catch (e) { cfg = {}; }
+
+    // Indice 0 = domingo (mesma ordem de Date.getDay), en = abreviacao do dia no fuso de Brasilia
+    var DIAS = [
+      { k: 'dom', en: 'Sun', nome: 'Domingo', em: 'domingo' },
+      { k: 'seg', en: 'Mon', nome: 'Segunda', em: 'segunda' },
+      { k: 'ter', en: 'Tue', nome: 'Terça', em: 'terça' },
+      { k: 'qua', en: 'Wed', nome: 'Quarta', em: 'quarta' },
+      { k: 'qui', en: 'Thu', nome: 'Quinta', em: 'quinta' },
+      { k: 'sex', en: 'Fri', nome: 'Sexta', em: 'sexta' },
+      { k: 'sab', en: 'Sat', nome: 'Sábado', em: 'sábado' }
+    ];
+    var EXIBIR = [1, 2, 3, 4, 5, 6, 0]; // segunda a domingo
+
+    function hora(s) {
+      var m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim());
+      return m ? parseInt(m[1], 10) + parseInt(m[2], 10) / 60 : null;
+    }
+    function fmt(n) {
+      var h = Math.floor(n), m = Math.round((n - h) * 60);
+      return h + 'h' + (m ? (m < 10 ? '0' : '') + m : '');
+    }
+    function turno(i) {
+      var d = cfg[DIAS[i].k];
+      if (!d || d.nao_trabalha) return null;
+      var a = hora(d.entrada), b = hora(d.saida);
+      return a === null || b === null ? null : { a: a, b: b };
+    }
+
+    // Tabela de horarios, montada a partir do JSON
+    var tbody = document.getElementById('horas');
+    var linhas = {};
+    EXIBIR.forEach(function (i) {
+      var t = turno(i), tr = document.createElement('tr'), th = document.createElement('th'), td = document.createElement('td');
+      th.scope = 'row'; th.textContent = DIAS[i].nome;
+      if (t) { td.textContent = fmt(t.a) + ' às ' + fmt(t.b); } else { td.textContent = 'Fechado'; td.className = 'off'; }
+      tr.appendChild(th); tr.appendChild(td); tbody.appendChild(tr);
+      linhas[i] = tr;
+    });
+
+    // Aberto agora / fechado, no horario de Brasilia
+    var pill = document.getElementById('status'), txt = pill.querySelector('span');
+    function agoraBR() {
+      var dia = 0, h = 0, m = 0;
+      new Intl.DateTimeFormat('en-US', { timeZone: 'America/Sao_Paulo', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+              .formatToParts(new Date()).forEach(function (p) {
+        if (p.type === 'weekday') DIAS.forEach(function (d, i) { if (d.en === p.value) dia = i; });
+        if (p.type === 'hour') h = parseInt(p.value, 10);
+        if (p.type === 'minute') m = parseInt(p.value, 10);
+      });
+      return { dia: dia, t: h + m / 60 };
+    }
+    function atualizar() {
+      try {
+        var n = agoraBR(), hoje = turno(n.dia);
+        EXIBIR.forEach(function (i) { linhas[i].classList.toggle('is-today', i === n.dia); });
+        if (hoje && n.t >= hoje.a && n.t < hoje.b) {
+          pill.className = 'pill is-open';
+          txt.textContent = 'Aberto agora, fecha às ' + fmt(hoje.b);
+          return;
+        }
+        pill.className = 'pill is-closed';
+        if (hoje && n.t < hoje.a) { txt.textContent = 'Fechado agora, abre hoje às ' + fmt(hoje.a); return; }
+        for (var k = 1; k <= 7; k++) {
+          var i = (n.dia + k) % 7, t = turno(i);
+          if (t) {
+            txt.textContent = 'Fechado agora, abre ' + (k === 1 ? 'amanhã' : DIAS[i].em) + ' às ' + fmt(t.a);
+            return;
+          }
+        }
+        txt.textContent = 'Fechado no momento';
+      } catch (e) { /* mantem o texto padrao */ }
+    }
+    atualizar();
+    setInterval(atualizar, 60000);
+
+    // Copiar numero
+    var btn = document.getElementById('copy');
+    btn.addEventListener('click', function () {
+      var el = document.getElementById('tel');
+      var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1800); };
+      var fallback = function () {
+        var rg = document.createRange(); rg.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(rg);
+      };
+      try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch (e) { fallback(); }
+    });
+  })();
+</script>
+</body>
+</html>
